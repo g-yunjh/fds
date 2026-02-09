@@ -1,0 +1,33 @@
+### Java & Gradle ###
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+bin/
+out/
+
+### IDE (IntelliJ, VSCode) ###
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
+
+### OS & Log ###
+.DS_Store
+*.log
+logs/
+
+### Docker & Infrastructure ###
+# Docker 데이터 볼륨은 제외 (데이터 보존이 필요하면 로컬에만 유지)
+kafka_data/
+redis_data/
+timescale_data/
+minio_data/
+.env
+
+### Spring Boot ###
+HELP.md
+

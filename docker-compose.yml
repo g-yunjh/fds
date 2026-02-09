@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # 1. 메시지 브로커: Kafka (KRaft 모드 - 주키퍼 없이 가볍게 실행)
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: fds-kafka
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    volumes:
+      - kafka_data:/bitnami/kafka
+
+  # 2. 실시간 캐시 및 지표: Redis (Z-Score 계산용)
+  redis:
+    image: redis:latest
+    container_name: fds-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+
+  # 3. 시계열 데이터베이스: TimescaleDB (PostgreSQL 기반)
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: fds-timescale
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=fds_db
+      - POSTGRES_USER=fds_user
+      - POSTGRES_PASSWORD=fds_pass
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+
+  # 4. 데이터 레이크: MinIO (S3 호환 로컬 저장소)
+  minio:
+    image: minio/minio:latest
+    container_name: fds-minio
+    ports:
+      - "9000:9000" # API
+      - "9001:9001" # Console (웹 UI)
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password123
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
+volumes:
+  kafka_data:
+  redis_data:
+  timescale_data:
+  minio_data:
+

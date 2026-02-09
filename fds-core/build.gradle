@@ -1,0 +1,15 @@
+plugins {
+    id 'org.springframework.boot'
+}
+
+description = '실시간 수집 및 이상 탐지 엔진'
+
+dependencies {
+    // Core 모듈 전용 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // 테스트용
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+}
