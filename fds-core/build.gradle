@@ -1,5 +1,14 @@
 plugins {
-    id 'org.springframework.boot'
+    // since the project has its own wrapper the root-level plugin management
+    // declared in the parent build.gradle isn't visible; supply explicit
+    // versions here so the module can compile by itself.
+    id 'java'
+    id 'org.springframework.boot' version '4.0.2'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+repositories {
+    mavenCentral()
 }
 
 description = '실시간 수집 및 이상 탐지 엔진'
@@ -7,9 +16,19 @@ description = '실시간 수집 및 이상 탐지 엔진'
 dependencies {
     // Core 모듈 전용 의존성
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux' // reactive client for websocket
     implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
     implementation 'org.springframework.kafka:spring-kafka'
 
+    // processing @ConfigurationProperties classes
+    implementation 'org.springframework.boot:spring-boot-configuration-processor'
+
     // 테스트용
     testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+// make sure JUnit 5 platform is used when this module is built standalone
+tasks.named('test') {
+    useJUnitPlatform()
 }
