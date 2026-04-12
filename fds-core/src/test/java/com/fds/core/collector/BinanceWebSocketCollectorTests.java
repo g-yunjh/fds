@@ -1,5 +1,7 @@
 package com.fds.core.collector;
 
+import com.fds.core.collector.BinanceWebSocketCollector;
+import com.fds.core.collector.BinanceWebSocketProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
